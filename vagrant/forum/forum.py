@@ -21,7 +21,7 @@ HTML_WRAP = '''\
       textarea { width: 400px; height: 100px; }
       div.post { border: 1px solid #999;
                  padding: 10px 10px;
-		 margin: 10px 20%%; }
+     margin: 10px 20%%; }
       hr.postbound { width: 50%%; }
       em.date { color: #999 }
     </style>
@@ -46,7 +46,6 @@ POST = '''\
 ## Request handler for main page
 def View(env, resp):
     '''View is the 'main page' of the forum.
-
     It displays the submission form and the previously posted messages.
     '''
     # get posts from database
@@ -85,7 +84,7 @@ def Post(env, resp):
 ## Dispatch table - maps URL prefixes to request handlers
 DISPATCH = {'': View,
             'post': Post,
-	    }
+      }
 
 ## Dispatcher forwards requests according to the DISPATCH table.
 def Dispatcher(env, resp):
@@ -104,4 +103,3 @@ def Dispatcher(env, resp):
 httpd = make_server('', 8000, Dispatcher)
 print "Serving HTTP on port 8000..."
 httpd.serve_forever()
-
