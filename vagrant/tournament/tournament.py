@@ -50,10 +50,9 @@ def registerPlayer(name):
     """
     DB = connect()
     c = DB.cursor()
-    c.execute("insert into players(name , matches_played) values (%s,0)" , (name,))
+    c.execute("insert into players(name , matches_played) values (%s,0)", (name,))
     DB.commit()
     DB.close()
-
 
 
 def playerStandings():
@@ -72,13 +71,14 @@ def playerStandings():
 
     DB = connect()
     c = DB.cursor()
-    c.execute("""select players.id, players.name, count(matches.winner_id) as wins, players.matches_played
+    c.execute(
+        """select players.id, players.name, count(matches.winner_id) as wins, players.matches_played
         from players left outer join matches
         on matches.winner_id = players.id
         group by players.id , players.name
         order by wins desc;
         """)
-    players_record = c.fetchall();
+    players_record = c.fetchall()
     DB.close()
     return players_record
 
@@ -92,11 +92,20 @@ def reportMatch(winner, loser):
     """
     DB = connect()
     c = DB.cursor()
-    c.execute("insert into matches(winner_id , loser_id) values (%s, %s) returning id ;" , (winner,loser,))
+    c.execute(
+        "insert into matches(winner_id , loser_id) values (%s, %s) returning id ;",
+        (winner,
+         loser,
+         ))
     match_id = c.fetchone()[0]
-    c.execute("select  winner_id , loser_id from matches where id = %s ;",(match_id,))
-    match_players = c.fetchall();
-    c.execute("update players set matches_played = matches_played + 1 where id = %s or id = %s ;", (match_players[0][0],match_players[0][1],))
+    c.execute(
+        "select  winner_id , loser_id from matches where id = %s ;", (match_id,))
+    match_players = c.fetchall()
+    c.execute(
+        "update players set matches_played = matches_played + 1 where id = %s or id = %s ;",
+        (match_players[0][0],
+         match_players[0][1],
+         ))
     DB.commit()
     DB.close()
 
@@ -126,7 +135,6 @@ def swissPairings():
     while len(ranking) > 1:
         p1 = ranking.pop(0)
         p2 = ranking.pop(0)
-        swiss_pairs.append((p1[0],p1[1],p2[0],p2[1]))
-
+        swiss_pairs.append((p1[0], p1[1], p2[0], p2[1]))
 
     return swiss_pairs
