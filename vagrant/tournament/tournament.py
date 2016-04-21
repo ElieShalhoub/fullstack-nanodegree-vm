@@ -48,7 +48,7 @@ def registerPlayer(name):
     """
     DB = connect()
     c = DB.cursor()
-    c.execute("insert into players(name , matches_played) values (%s)" , (name,0,))
+    c.execute("insert into players(name , matches_played) values (%s,0)" , (name,))
     DB.commit()
     DB.close()
 
@@ -79,7 +79,7 @@ def playerStandings():
     players_record = c.fetchall();
     DB.close()
     return players_record
-
+ß
 
 def reportMatch(winner, loser):
     """Records the outcome of a single match between two players.
@@ -88,6 +88,11 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
+    DB = connect()
+    c = DB.cursor()
+    c.execute("insert into matches(winner_id , loser_id) values (%i, %i)" , (winner,loser,))
+    DB.commit()
+    DB.close()
  
  
 def swissPairings():
