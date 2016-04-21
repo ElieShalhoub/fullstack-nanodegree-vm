@@ -126,12 +126,8 @@ def swissPairings():
         name2: the second player's name
     """
     swiss_pairs = []
-    ranking = []
-    r = playerStandings()
-    for row in r:
-        ranking.append(row)
+    ranking = playerStandings()
 
-    swiss_pairs = []
     while len(ranking) > 1:
         p1 = ranking.pop(0)
         p2 = ranking.pop(0)
