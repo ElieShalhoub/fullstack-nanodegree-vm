@@ -34,8 +34,7 @@ def countPlayers():
     c.execute("select count(*) as number_of_players from players;")
     players_count = c.fetchall()[0];
     DB.close()
-
-    return players_count;
+    return players_count
 
 
 def registerPlayer(name):
@@ -49,7 +48,7 @@ def registerPlayer(name):
     """
     DB = connect()
     c = DB.cursor()
-    c.execute("insert into players(name) values (%s)" , (name,))
+    c.execute("insert into players(name , matches_played) values (%s)" , (name,0,))
     DB.commit()
     DB.close()
 
@@ -68,6 +67,18 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
+
+    DB = connect()
+    c = DB.cursor()
+    c.execute("""select players.id, players.name, count(matches.winner_id) as wins, players.matches_played 
+        from players left outer join matches 
+        on matches.winner_id = players.id 
+        group by players.id , players.name 
+        order by wins desc;
+        """
+    players_record = c.fetchall();
+    DB.close()
+    return players_record
 
 
 def reportMatch(winner, loser):
