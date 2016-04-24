@@ -1,4 +1,4 @@
--- Table definitions for the tournament project.
+	-- Table definitions for the tournament project.
 --
 -- Put your SQL 'create table' statements in this file; also 'create view'
 -- statements if you choose to use it.
@@ -10,13 +10,13 @@
 -- Create the table for players
 Create table players (
 	id serial primary key,
-	name text
+	name text,
+	matches_played integer
 	);
 
 -- Create the matches table
 Create table matches (
 	id serial primary key,
-	player1_id integer references players(id),
-	player2_id integer references players(id),
-	match_winner integer references players(id)
+	winner_id integer references players(id),
+	loser_id integer references players(id)
 	);
