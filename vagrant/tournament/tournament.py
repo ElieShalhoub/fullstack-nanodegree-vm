@@ -50,7 +50,8 @@ def registerPlayer(name):
     """
     DB = connect()
     c = DB.cursor()
-    c.execute("insert into players(name , matches_played) values (%s,0)", (name,))
+    c.execute("insert into players(name , matches_played) values (%s,0)",
+    (name,))
     DB.commit()
     DB.close()
 
@@ -58,8 +59,8 @@ def registerPlayer(name):
 def playerStandings():
     """Returns a list of the players and their win records, sorted by wins.
 
-    The first entry in the list should be the player in first place, or a player
-    tied for first place if there is currently a tie.
+    The first entry in the list should be the player in first place,
+    or a player tied for first place if there is currently a tie.
 
     Returns:
       A list of tuples, each of which contains (id, name, wins, matches):
@@ -72,7 +73,8 @@ def playerStandings():
     DB = connect()
     c = DB.cursor()
     c.execute(
-        """select players.id, players.name, count(matches.winner_id) as wins, players.matches_played
+        """select players.id, players.name, count(matches.winner_id) as wins,
+        players.matches_played
         from players left outer join matches
         on matches.winner_id = players.id
         group by players.id , players.name
@@ -93,22 +95,24 @@ def reportMatch(winner, loser):
     DB = connect()
     c = DB.cursor()
     c.execute(
-        "insert into matches(winner_id , loser_id) values (%s, %s) returning id ;",
+        """insert into matches(winner_id , loser_id) values (%s, %s)
+        returning id;""",
         (winner,
          loser,
          ))
     match_id = c.fetchone()[0]
     c.execute(
-        "select  winner_id , loser_id from matches where id = %s ;", (match_id,))
+        "select  winner_id , loser_id from matches where id = %s ;",
+        (match_id,))
     match_players = c.fetchall()
     c.execute(
-        "update players set matches_played = matches_played + 1 where id = %s or id = %s ;",
+        """update players set matches_played = matches_played + 1
+        where id = %s or id = %s ;""",
         (match_players[0][0],
          match_players[0][1],
          ))
     DB.commit()
     DB.close()
-
 
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
