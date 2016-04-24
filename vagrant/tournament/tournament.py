@@ -51,7 +51,7 @@ def registerPlayer(name):
     DB = connect()
     c = DB.cursor()
     c.execute("insert into players(name , matches_played) values (%s,0)",
-    (name,))
+              (name,))
     DB.commit()
     DB.close()
 
@@ -113,6 +113,7 @@ def reportMatch(winner, loser):
          ))
     DB.commit()
     DB.close()
+
 
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
