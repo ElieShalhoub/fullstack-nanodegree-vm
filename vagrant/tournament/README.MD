@@ -1,3 +1,5 @@
+Project 2 - Tournament Results version 1.0 25/04/2016
+
 Description
 -----------------
 
@@ -18,13 +20,34 @@ tournament_test.py contains the code to test tournament.py
 
 Running the code
 -----------------
-Make sure that you have Python 2.7 installed on your computer
+Make sure that you have Python 2.7 and PostgreSQL 9.1 or later installed 
+on your computer.
 
 On a mac or linux, open terminal, and navigate to where you downloaded
-the project files, then type:
+the project files, then:
+1) Type psql to connect to PostgreSQL
+2) From the psql command line interface, type: CREATE DATABASE tournament; 
+   This will create the database called tournament.
+3) Type: \c tournament;
+   This will connect to the created database in step 2
+4) Type: \i tournament.sql
+   This will execute the create table sql statements we have in our tournament.sql file
+5) Next, exist the psql CLI, through typing \q
+6) From the terminal shell type the following to execute the tournament test code. 
 >python tournament_test.py
 
-On windows, open the file tournament_test.py in IDLE, and make sure that
+On windows, Go to Start->run ->  type cmd  <press enter>
+Then from the command prompt type:
+1) psql -U postgres template1
+   This will connect to PostgreSQL
+2) From the psql command line interface, type: CREATE DATABASE tournament;
+   This will create the database called tournament.
+3) Type: \c tournament;
+   This will connect to the created database in step 2
+4) Type: \i tournament.sql
+   This will execute the create table sql statements we have in our tournament.sql file
+5) Next, exist the psql CLI, through typing \q 
+6) Open the file tournament_test.py in IDLE, and make sure that
 all the downloaded files are in the same directory, and then select:
 Run > Run Module
 
