@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 app = Flask(__name__)
 
 from sqlalchemy import create_engine
@@ -22,7 +22,23 @@ session = DBSession()
 #items = [ {'name':'Cheese Pizza', 'description':'made with fresh cheese', 'price':'$5.99','course' :'Entree', 'id':'1'}, {'name':'Chocolate Cake','description':'made with Dutch Chocolate', 'price':'$3.99', 'course':'Dessert','id':'2'},{'name':'Caesar Salad', 'description':'with fresh organic vegetables','price':'$5.99', 'course':'Entree','id':'3'},{'name':'Iced Tea', 'description':'with lemon','price':'$.99', 'course':'Beverage','id':'4'},{'name':'Spinach Dip', 'description':'creamy dip with fresh spinach','price':'$1.99', 'course':'Appetizer','id':'5'} ]
 #item =  {'name':'Cheese Pizza','description':'made with fresh cheese','price':'$5.99','course' :'Entree'}
 
+#jsonify the list of restaurants
+@app.route('/restaurants/JSON')
+def restaurantsJSON():
+	restaurants = session.query(Restaurant).all()
+	return jsonify(Restaurants=[i.serialize for i in restaurants])
 
+#jsonify the list of menu items for a certain restaurant
+@app.route('/restaurant/<int:restaurant_id>/menu/JSON')
+def restaurantMenuItemsJSON(restaurant_id):
+    menuitems = session.query(MenuItem).filter_by(restaurant_id=restaurant_id).all()
+    return jsonify(MenuItems=[i.serialize for i in menuitems])
+
+#jsonify the menu item per restaurant id and menu id
+@app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/JSON')
+def restaurantMenuItemJSON(restaurant_id, menu_id):
+    menuitem = session.query(MenuItem).filter_by(restaurant_id=restaurant_id,id=menu_id).one()
+    return jsonify(MenuItem=[menuitem.serialize])
 
 #Default app route
 #Routes to all restaurants page
@@ -39,6 +55,7 @@ def newRestaurant():
         restaurant = Restaurant(name = request.form['name'])
         session.add(restaurant)
         session.commit()
+        flash('New Restaurant Created')
         restaurants = session.query(Restaurant).all()
         return render_template('restaurants.html',restaurants=restaurants)
     else:
@@ -54,6 +71,7 @@ def editRestaurant(restaurant_id):
             restaurant.name = request.form['name']
             session.add(restaurant)
             session.commit()
+            flash('Restaurant Successfully Editted')
             restaurants = session.query(Restaurant).all()
         return render_template('restaurants.html',restaurants=restaurants)
     else:
@@ -67,6 +85,7 @@ def deleteRestaurant(restaurant_id):
     if request.method == 'POST':
         session.delete(restaurant)
         session.commit()
+        flash('Restaurant Successfully Deleted')
         restaurants = session.query(Restaurant).all()
         return render_template('restaurants.html',restaurants=restaurants)
     else:
@@ -91,6 +110,7 @@ def newMenuItem(restaurant_id):
         menuItem = MenuItem(name = request.form['name'], description = request.form['description'], price = request.form['price'] , course = request.form['course'],restaurant_id=restaurant_id)
         session.add(menuItem)
         session.commit()
+        flash('Menu Item Created')
         items = session.query(MenuItem).filter_by(restaurant_id=restaurant_id).all()
         return render_template('menu.html',restaurant = restaurant, items = items)
     else:
@@ -110,6 +130,7 @@ def editMenuItem(restaurant_id, menu_id):
             item.course = request.form['course']
             session.add(item)
             session.commit()
+            flash('Menu Item Successfully Editted')
         items = session.query(MenuItem).filter_by(restaurant_id=restaurant_id).all()
         return render_template('menu.html',restaurant = restaurant, items = items)
     else:
@@ -124,6 +145,7 @@ def deleteMenuItem(restaurant_id, menu_id):
     if request.method == 'POST':
         session.delete(item)
         session.commit()
+        flash('Menu Item Successfully Deleted')
         items = session.query(MenuItem).filter_by(restaurant_id=restaurant_id).all()
         return render_template('menu.html',restaurant = restaurant, items = items)
     else:
@@ -132,5 +154,6 @@ def deleteMenuItem(restaurant_id, menu_id):
 
 
 if __name__ == '__main__':
+    app.secret_key = 'this is my secret key'
     app.debug = True
     app.run(host = '0.0.0.0', port = 5000 )
