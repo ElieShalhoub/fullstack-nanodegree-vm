@@ -15,23 +15,52 @@ session = DBSession()
 @app.route('/')
 @app.route('/category')
 def defaultCatalog():
-    category = session.query(Category).first()
-    return render_template('category.html', category = category)
- 
+    categories = session.query(Category).all()
+    return render_template('category.html', categories = categories)
 
+
+#Routes to add new category
 @app.route('/category/new' , methods=['GET','POST'])
-def newCatalog():
-	#if request.method == 'POST':
-		newCat = Category(name = "Football")
-		session.add(newCat)
-		session.commit()
-		#flash('New category [%s] inserted' %category.name)
-		#return redirect(url_for('restaurantMenu',restaurant_id=restaurant_id))
-		return "added successfully"
-	#else:
-	#return render_template('newmenuitem.html',restaurant_id=restaurant_id
-	#	return "___"
+def newCategory():
+    if request.method == 'POST':
+        newCat = Category(name =  request.form['name'])
+        session.add(newCat)
+        session.commit()
+        flash('Category Created')
+        allCategories = session.query(Category).all()
+        return render_template('category.html',categories = allCategories)
+    else:
+        return render_template('newCategory.html')
 
+#Routes to edit category page
+@app.route('/category/<int:category_id>/edit', methods=['GET','POST'])
+def editRestaurant(category_id):
+    category = session.query(Category).filter_by(id=category_id).one()
+    categories = session.query(Category).all()
+    if request.method == 'POST':
+        if request.form['name']:
+            category.name = request.form['name']
+            session.add(category)
+            session.commit()
+            flash('Category Successfully Editted')
+            categories = session.query(Restaurant).all()
+        return render_template('categories.html',categories=categories)
+    else:
+        return render_template('editcategory.html',category_id=category_id,category=category)
+
+#Routes to delete category page
+@app.route('/category/<int:category_id>/delete', methods=['GET','POST'])
+def deleteRestaurant(category_id):
+    category = session.query(Category).filter_by(id=category_id).one()
+    categories = session.query(Category).all()
+    if request.method == 'POST':
+        session.delete(category)
+        session.commit()
+        flash('Category Successfully Deleted')
+        categories = session.query(Category).all()
+        return render_template('categories.html',categories=categories)
+    else:
+        return render_template('deletecategory.html',category_id=category_id,category=category)
 
 #launching the application
 if __name__ == '__main__':

@@ -5,7 +5,9 @@
 	<body>
 	<div class = 'pane'>
 		<div class = 'header'>
+		{% for category in categories %}	
 		<h1>{{ category.name }}</h1>
+		{% endfor %}
 	</div>
 
 	

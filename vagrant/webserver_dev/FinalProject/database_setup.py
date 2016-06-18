@@ -7,6 +7,8 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
+class User(Base):
+
 class Restaurant(Base):
     #creating the restaurant table
     __tablename__ = 'restaurant'
